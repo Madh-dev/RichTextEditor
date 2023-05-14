@@ -13,7 +13,7 @@ This is a customizable rich text editor built using React ⚛️ and Slate.js �
 
 - React: A JavaScript library for building user interfaces.
 - Slate.js: An extensible framework for building rich text editors in React.
-- Material-UI: A popular UI component library that provides icons for the formatting buttons.
+- REACT Icons Kit: A popular UI component library that provides icons for the formatting buttons.
 
 ## 🚀 Installation
 
