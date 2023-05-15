@@ -19,109 +19,67 @@ const TextEditor = () => {
 
     const renderLeaf = useCallback((props) => {
         const { attributes, children, leaf } = props;
+
+        let content = <span {...attributes}>{children}</span>
         if (leaf.bold) {
-            return <strong {...attributes}>{children}</strong>;
+            content = <strong>{content}</strong>;
         }
         if (leaf.italic) {
-            return <em {...attributes}>{children}</em>;
+            content = <em >{content}</em>;
         }
         if (leaf.code) {
-            return <code {...attributes}>{children}</code>;
+            content = <code>{content}</code>;
         }
         if (leaf.list) {
-            return <ul {...attributes} style={{ listStyleType: 'square' }}>
-                <li>{children}</li>
-            </ul>
+            content = (
+                <ul>
+                    <li>{content}</li>
+                </ul>
+            )
         }
         if (leaf.underline) {
-            return <u {...attributes}>{children}</u>
+            content =  <u>{content}</u>
         }
-        return <span {...attributes}>{children}</span>;
+        return content;
     }, []);
 
-    const onKeyDown = (event) => {
-        // we want all our commands to start with the user pressing ctrl,
-        // if they don't , we cancel the action
 
-        if (!event.ctrlKey) {
+    const onKeyDown = (event) => {
+        if(!event.ctrlKey){
             return;
         }
-
         event.preventDefault();
 
-        // Decide what to do based on the key code
         switch (event.key) {
-            // when b is pressed, add a 'bold' mark to the text
-            case "b": {
-                const [match] = Editor.nodes(editor, {
-                    match: (n) => n.bold === true,
-                    universal: true,
-                });
-                const isActive = !!match;
-                Transforms.setNodes(
-                    editor,
-                    { bold: isActive ? null : true },
-                    { match: (n) => Text.isText(n), split: true }
-                );
+            case 'b': {
+                event.preventDefault();
+                toggleMark(event,'bold');
                 break;
             }
-            case "i": {
-                const [match] = Editor.nodes(editor, {
-                    match: (n) => n.italic === true,
-                    universal: true,
-                });
-                const isActive = !!match;
-                Transforms.setNodes(
-                    editor,
-                    { italic: isActive ? null : true },
-                    { match: (n) => Text.isText(n), split: true }
-                );
+            case 'i': {
+                event.preventDefault();
+                toggleMark(event,'italic');
                 break;
             }
-            case "c": {
-                const [match] = Editor.nodes(editor, {
-                    match: (n) => n.code === true,
-                    universal: true,
-                });
-                const isActive = !!match;
-                Transforms.setNodes(
-                    editor,
-                    { code: isActive ? null : true },
-                    { match: (n) => Text.isText(n), split: true }
-                );
+            case 'u' : {
+                event.preventDefault();
+                toggleMark(event,'underline');
                 break;
             }
-            case "l": {
-                const [match] = Editor.nodes(editor, {
-                    match: (n) => n.list === true,
-                    universal: true,
-                });
-                const isActive = !!match;
-                Transforms.setNodes(
-                    editor,
-                    { list: isActive ? null : true },
-                    { match: (n) => Text.isText(n), split: true }
-                );
+            case 'l' : {
+                event.preventDefault();
+                toggleMark(event,'list');
                 break;
             }
-            case "u": {
-                const [match] = Editor.nodes(editor, {
-                    match: (n) => n.underline === true,
-                    universal: true,
-                });
-                const isActive = !!match;
-                Transforms.setNodes(
-                    editor,
-                    { underline: isActive ? null : true },
-                    { match: (n) => Text.isText(n), split: true }
-                );
+            case 'c' : {
+                event.preventDefault();
+                toggleMark(event,'code');
                 break;
             }
             default:
                 break;
         }
     };
-
     const isMarkActive = (type) => {
         const [match] = Editor.nodes(editor, {
             match: (n) => n[type] === true,
